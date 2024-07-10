@@ -57,7 +57,7 @@ interface IAppData{
 Интерфейс главной страницы
 
 ```
-interface PageHome {
+interface Page {
   counter: number;
   catalog: HTMLElement[];
   blocking: boolean;
@@ -94,20 +94,19 @@ interface ICard extends IProductItem {
 }
 ```
 
-Интерфейс корзины
+Интерфейс отображения корзины
 
 ```
-interface IBasket {
+interface IBasketDataView {
   total: number; // общая сумма заказа
   button: HTMLButtonElement;
   items: HTMLElement[]; // список товаров
  }
  ```
 
-Интерфейс данных корзины
-
+Интерфейс данных корзины с продуктами
 ```
-interface IBasketData {
+interface IBasketDataModel {
   items: IProductItem[];
   addProductItem(id: IProductItem): void;
   removeProductItem(id: IProductItem): void;
@@ -120,7 +119,7 @@ interface IBasketData {
 Интерфейс данных одного продукта в корзине
 
 ```
-interface IBasketProductItem {
+interface IBasketProduct {
   index: number;
   title: string;
   price: number;
@@ -235,7 +234,7 @@ interface ISuccessOrder {
 
 #### Класс Component
 
-Взаимодействие с DOM-элементами, позволяет управлять поведением и внешним видом.\
+Взаимодействие с DOM-элементами, позволяет управлять поведением и внешним видом.
 
 Методы:
 - `toggleClass`- переключает класс элемента;
@@ -257,7 +256,7 @@ interface ISuccessOrder {
 #### Класс AppData
 
 Хранит данные приложения, следовательно можно отслеживать изменения.\
-Наследуется от Model.\
+Наследуется от Model.
 
 Поля класса:
 
@@ -282,7 +281,7 @@ interface ISuccessOrder {
 - `validateContacts()` — валидация формы с контактами.
 
 
-#### Класс PageHome
+#### Класс Page
 
 Отрисовка главной страницы. Наследуется от класса `Component`.
 
@@ -299,18 +298,16 @@ interface ISuccessOrder {
 
 ####  Класс Card
 
-Управляет отображением карточки товара. Наследуется от класса `Component`
+Ответственен за отображение на странице данных карточки продукта. Наследуется от класса `Component`
 
 
 Поля класса:
 
  - `_title: string` - название продукта;
  - `_description: string` - описание продукта;
- - `id: string` - id товара;
- - `price: number` -  цена продукта;
+ - `price: number | null` -  цена продукта;
  - `category: string` -  категория продукта;
  - `_image: string` -  изображение продукта;
- - `index: number` — индекс продукта в корзине;
  - `_button?: HTMLButtonElement` - кнопка.
 
 Методы:
@@ -322,8 +319,7 @@ interface ISuccessOrder {
 - `get id()` — получает id продукта;
 - `set price` — изменяет цену продукта;
 - `set category()` — изменяет категорию продукта;
-- `set image(value: string)` — изменяет изображение продукта;
-- `set index` - изменяет индекс продукта
+- `set image(value: string)` — изменяет изображение продукта.
 
 
 #### Класс Modal
@@ -361,9 +357,9 @@ interface ISuccessOrder {
 - `render` — рендер формы.
 
 
-#### Класс BasketData:
+#### Класс Basket:
 
-Отображает корзину и управляет её содержиым.
+Ответственен за отображение содержимого корзины и предоставляет методы для управления содержимым.
 
 Поля класса:
 
@@ -374,19 +370,19 @@ interface ISuccessOrder {
 Методы класса:
 
 - `set items(items: HTMLElement[])` — изменяет элементы продуктов в корзине;
-- `set total(total: number)` — изменяет общая сумма заказа в корзине.
+- `set total(total: number)` — изменяет общую сумму заказа в корзине.
 
 
-#### BasketProductItem
+#### BasketProduct
 
-Данные продуктов, которые добавлены в корзину.
+Ответственен за реализацию отображения продуктов, которые добавлены в корзину, а также предоставляет методы, чтобы  ими управлять.
 
 Поля класса:
 
 - `_index: HTMLElement`- порядковый номер продукта в корзине;
 - `_title` - название продукта;
 - `_price` - цена продукта;
-- `_deleteButton: HTMLElement`- кнопка урны (удаление продукта).
+- `_deleteButton: HTMLElement`- кнопка удаление продукта.
 
 Методы класса:
 

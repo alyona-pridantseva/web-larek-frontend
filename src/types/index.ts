@@ -7,7 +7,7 @@ export interface IAppData {
 }
 
 // Интерфейс главной страницы
-export interface PageHome {
+export interface Page {
   counter: number;
   catalog: HTMLElement[];
   blocking: boolean;
@@ -23,7 +23,7 @@ export interface IProductItem {
   title: string;
   description: string;
   id: string;
-  price: number;
+  price: number | null;
   category: string;
   image: string;
   getIdProductItem(): string;
@@ -34,15 +34,15 @@ export interface ICard extends IProductItem {
   button?: string;
 }
 
-// Интерфейс корзины
-export interface IBasket {
+// Интерфейс отображения корзины
+export interface IBasketDataView {
   total: number; // общая сумма заказа
   button: HTMLButtonElement;
   items: HTMLElement[]; // список товаров
  }
 
-// Интерфейс данных корзины
-export interface IBasketData {
+// Интерфейс данных корзины с продуктами
+export interface IBasketDataModel {
   items: IProductItem[];
   addProductItem(id: IProductItem): void;
   removeProductItem(id: IProductItem): void;
@@ -50,8 +50,8 @@ export interface IBasketData {
   clearBasket(): void;
 }
 
-// Интерфейс данных одного продукта
-export interface IBasketProductItem {
+// Интерфейс данных одного продукта в корзине
+export interface IBasketProduct {
   index: number;
   title: string;
   price: number;
