@@ -82,7 +82,7 @@ export interface IOrder {
 }
 
 // Интерфейс Api заказа
-interface IOrderApi {
+export interface IOrderApi {
 	items: string[];
 	payment: string;
 	email: string;
