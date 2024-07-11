@@ -7,10 +7,10 @@ export interface IAppData {
 }
 
 // Интерфейс главной страницы
-export interface Page {
+export interface IPage {
   counter: number;
   catalog: HTMLElement[];
-  blocking: boolean;
+  locked: boolean;
 }
 
 //Интерфейс модального окна
@@ -35,14 +35,14 @@ export interface ICard extends IProductItem {
 }
 
 // Интерфейс отображения корзины
-export interface IBasketDataView {
+export interface IBasketView {
   total: number; // общая сумма заказа
   button: HTMLButtonElement;
   items: HTMLElement[]; // список товаров
  }
 
 // Интерфейс данных корзины с продуктами
-export interface IBasketDataModel {
+export interface IBasketModel {
   items: IProductItem[];
   addProductItem(id: IProductItem): void;
   removeProductItem(id: IProductItem): void;
@@ -70,24 +70,9 @@ export interface IContactsForm {
   phone: string;
 }
 
-// Интерфейс отправки информации заказа на сервер
-export interface IOrder {
-	items: IProductItem[];
-	id: string;
-	payment: string;
-	address: string;
-	email: string;
-	phone: string;
-	total: number;
-}
-
-// Интерфейс Api заказа
-export interface IOrderApi {
-	items: string[];
-	payment: string;
-	email: string;
-	phone: string;
-	address: string;
+// Интерфейс данных заказа
+export interface IOrder extends IAddressForm, IContactsForm {
+	items: string[]; // Список товаров
 	total: number;
 }
 
@@ -103,4 +88,9 @@ export interface IOrderResult {
 // Интерфейс успешно оформленного заказа
 export interface ISuccessOrder {
   total: number;
+}
+
+// Интерфейс брокера событий
+export interface IEventEmitter {
+	emit: (event: string, data: unknown) => void;
 }
