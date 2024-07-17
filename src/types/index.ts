@@ -1,5 +1,5 @@
 // Интерфейс, описывающий состояние приложения
-export interface IAppData {
+export interface IAppState {
 	catalog: IProductItem[];
 	basket: IProductItem[];
   order: IOrder | null; // описание заказа
