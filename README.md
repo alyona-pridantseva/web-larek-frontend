@@ -108,8 +108,8 @@ interface IBasketView {
 ```
 interface IBasketModel {
   items: IProductItem[];
-  addProductItem(id: IProductItem): void;
-  removeProductItem(id: IProductItem): void;
+  add(id: IProductItem): void;
+  remove(id: IProductItem): void;
   getTotal(): number;
   clearBasket(): void;
 }
@@ -323,7 +323,7 @@ interface IEventEmitter {
 
 - `set counter(value: number | null)`;
 - `set catalog(items: HTMLElement[])`;
-- `set blocking(value: boolean)` — изменяет(активирует) блокировку страницы при открытом модальном окне.
+- `set locked(value: boolean)` — изменяет(активирует) блокировку страницы при открытом модальном окне.
 
 ####  Класс Card
 

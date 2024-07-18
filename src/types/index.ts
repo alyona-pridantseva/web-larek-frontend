@@ -44,8 +44,8 @@ export interface IBasketView {
 // Интерфейс данных корзины с продуктами
 export interface IBasketModel {
   items: IProductItem[];
-  addProductItem(id: IProductItem): void;
-  removeProductItem(id: IProductItem): void;
+  add(id: IProductItem): void;
+  remove(id: IProductItem): void;
   getTotal(): number;
   clearBasket(): void;
 }
