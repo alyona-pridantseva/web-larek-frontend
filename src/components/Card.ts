@@ -98,19 +98,19 @@ export class Card extends Component<ICard> {
   set category(value: string) {
     this.setText(this._category, value);
     if (value == "софт-скил") {
-        this.toggleClass(this._category, "card__category_soft");
+        this.toggleClass(this._category, "card__category_soft-skill");
     }
     else if (value == 'другое') {
         this.toggleClass(this._category, "card__category_other");
     }
     else if (value == 'дополнительное') {
-        this.toggleClass(this._category, "card__category_additional");
+        this.toggleClass(this._category, "card__category_more");
     }
     else if (value == 'кнопка') {
         this.toggleClass(this._category, "card__category_button");
     }
     else if (value == 'хард-скил') {
-        this.toggleClass(this._category, "card__category_hard");
+        this.toggleClass(this._category, "card__category_hard-skill");
     }
 }
 }

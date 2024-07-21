@@ -46,9 +46,9 @@ yarn build
 Интерфейс, описывающий состояние приложения
 
 ```
-interface IAppData{
+interface IAppState {
   catalog: IProductItem[];
-  basket: IProductItem[];
+  basket:  string[];
   order: IOrder | null; // описание заказа
   preview: string | null; // указатель той карточки, которую хотим посмотреть(id) т.е идентификатор товара для предпросмотра
 }

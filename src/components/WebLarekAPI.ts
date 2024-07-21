@@ -4,7 +4,7 @@ import { IOrder, IOrderResult, IProductItem } from '../types';
 export interface IWebLarekAPI {
 	getProductList: () => Promise<IProductItem[]>;
 	getProductItem: (id: string) => Promise<IProductItem>;
-  orderProducts: (order: IOrder) => Promise<IOrderResult>;
+	orderProducts: (order: IOrder) => Promise<IOrderResult>;
 }
 
 export class WebLarekAPI extends Api implements IWebLarekAPI {
@@ -23,7 +23,7 @@ export class WebLarekAPI extends Api implements IWebLarekAPI {
 	}
 
 	getProductList(): Promise<IProductItem[]> {
-		return this.get('/product').then((data: ApiListResponse<IProductItem>) =>
+		return this.get('/product/').then((data: ApiListResponse<IProductItem>) =>
 			data.items.map((item) => ({
 				...item,
 				image: this.cdn + item.image,
