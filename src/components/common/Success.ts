@@ -1,15 +1,15 @@
 import {Component} from "../base/Component";
 import {ensureElement} from "../../utils/utils";
 
+interface ISuccess {
+    total: number;
+}
+
 interface ISuccessActions {
     onClick: () => void;
 }
 
-export interface ISuccessOrder {
-    total: number;
-}
-
-export class Success extends Component<ISuccessOrder> {
+export class Success extends Component<ISuccess> {
     protected _total: HTMLElement;
     protected _close: HTMLElement;
 
@@ -24,7 +24,7 @@ export class Success extends Component<ISuccessOrder> {
         }
     }
 
-    set total(value: number) {
-		this.setText(this._total, `Списано ${value} синапсов`);
+    set total(price: number) {
+		this.setText(this._total, `Списано ${price} синапсов`);
 	}
 }

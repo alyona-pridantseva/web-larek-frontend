@@ -1,103 +1,75 @@
 import { Model } from './base/Model';
-import { IProductItem, IAppState, IOrder, IContactsForm, IAddressForm, IFormErrors, } from '../types/index';
+import {
+	ICard,
+	IAppState,
+	IOrder,
+	IContactsForm,
+	IAddressForm,
+	FormErrors,
+} from '../types/index';
 
 export type CatalogChangeEvent = {
-  catalog: IProductItem[]
+	catalog: CardItem[];
 };
 
-export class Product extends Model<IProductItem> {
-	id: string;
-	description: string;
-	image: string;
+export class CardItem extends Model<ICard> {
 	title: string;
-	category: string;
+	description: string;
+	id: string;
 	price: number | null;
-	isOrdered: boolean;
+	category: string;
+	image: string;
 	index: number;
-	getIdProductItem(): string {
-		return this.id;
-	}
+	button: string;
+	total: number;
 }
 
 export class AppState extends Model<IAppState> {
-  basket: IProductItem[] = [];
-  _catalog: IProductItem[];
-  _order: IOrder = {
-      email: '',
-      phone: '',
-      items: [],
-      total: null,
-      address: '',
-      payment: ''
-  };
-  formErrors: IFormErrors = {};
+	basket: CardItem[] = [];
+	catalog: CardItem[];
+	order: IOrder = {
+		email: '',
+		phone: '',
+		items: [],
+		total: null,
+		address: '',
+		payment: '',
+	};
+	preview: string | null;
+	formErrors: FormErrors = {};
 
-  get order() {
-		return this._order;
-	}
+  setCatalog(items: ICard[]) {
+    this.catalog = items.map((item) => new CardItem(item, this.events));
+    this.emitChanges('items:changed', { catalog: this.catalog });
+  }
 
-	getOrderAPI() {
-		const orderApi: IOrder = {
-			payment: this._order.payment,
-			email: this._order.email,
-			phone: this._order.phone,
-			address: this._order.address,
-			total: 0,
-			items: [],
-		};
-		orderApi.items = this._order.items.map((item) => item.id);
-		orderApi.total = this.getTotal();
-		return orderApi;
-	}
+  removeFromBasket(item: CardItem) {
+    this.basket = this.basket.filter(val => val.id != item.id)
+    this.emitChanges('basket:changed')
 
-	addToBasket(item: Product) {
-		if (this.findOrderItem(item) === null) {
-			this._order.items.push(item);
-			this.emitChanges('basket:changed');
-		}
-	}
+    this.basket.forEach(card => {
+        this.order.items.push(card.id)
+        this.order.items = [card.id]
+    })
+  }
 
-	removeFromBasket(item: Product) {
-		this._order.items = this._order.items.filter((el) => el.id != item.id);
-		this.emitChanges('basket:changed');
-	}
+  addToBasket(item: CardItem) {
+		this.basket.push(item)
+    this.order.items.push(item.id)
+    this.emitChanges('basket:changed')
+  }
 
-	clearBasket() {
-		this._order.items = [];
-		this.emitChanges('basket:changed');
-	}
+  clearBasket() {
+    this.basket.forEach(id => {
+        this.removeFromBasket(id);
+    });
+  }
 
 	getTotal() {
-		this._order.total = this._order.items.reduce((prev, current) => prev + current.price, 0);
-		return this._order.total;
+		return this.basket.reduce((a, c) => a + c.price, 0);
 	}
 
-	getProducts(): Product[] {
-		return this._catalog;
-	}
-
-	findOrderItem(item: Product) {
-		const orderItemIndex = this._order.items.findIndex(
-			(id) => id.getIdProductItem() === item.id
-		);
-
-		if (orderItemIndex !== -1) {
-			return orderItemIndex;
-		} else {
-			return null;
-		}
-	}
-
-	updateCounter(): number {
-		return this.basket.length;
-	}
-
-	setCatalog(items: IProduct[]) {
-		this.catalog = items.map((item) => new Product(item, this.events));
-		this.emitChanges('items:changed', { catalog: this.catalog });
-	}
-
-	setPreview(item: Product) {
+	setPreview(item: CardItem) {
 		this.preview = item.id;
 		this.emitChanges('preview:changed', item);
 	}

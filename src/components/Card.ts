@@ -1,23 +1,11 @@
 import { Component } from './base/Component';
 import { ensureElement } from '../utils/utils';
+import { ICard } from '../types';
 
 interface ICardActions {
 	onClick: (event: MouseEvent) => void;
-}
-
-export interface IButtonOptions {
-	disabledButton: boolean;
-	buttonText: string;
-}
-
-export interface ICard {
-	title: string;
-	description: string;
-	id: string;
-	price: number | null;
-	category: string;
-	image: string;
-	button?: string;
+	onDelete?: () => void;
+	onSubmit?: () => void;
 }
 
 export class Card extends Component<ICard> {
@@ -26,9 +14,12 @@ export class Card extends Component<ICard> {
 	protected _price: HTMLElement;
 	protected _category: HTMLElement;
 	protected _image?: HTMLImageElement;
+	protected _index: HTMLSpanElement;
 	protected _button?: HTMLButtonElement;
+	protected _button_delete?: HTMLButtonElement;
 
-	constructor(protected blockName: string, container: HTMLElement, actions?: ICardActions, buttonOptions?: IButtonOptions) {
+
+	constructor(protected blockName: string, container: HTMLElement, actions?: ICardActions) {
 		super(container);
 
 		this._title = ensureElement<HTMLElement>(`.${blockName}__title`, container);
@@ -36,7 +27,10 @@ export class Card extends Component<ICard> {
 		this._price = container.querySelector(`.${blockName}__price`);
 		this._category = container.querySelector(`.${blockName}__category`);
 		this._image = ensureElement<HTMLImageElement>(`.${blockName}__image`,container);
-		this._button = container.querySelector(`.${blockName}__button`);
+		this._index = container.querySelector('.basket__item-index');
+		this._button = container.querySelector(`.button`);
+		this._button_delete = container.querySelector('.basket__item-delete');
+
 
 		if (actions?.onClick) {
 			if (this._button) {
@@ -46,11 +40,19 @@ export class Card extends Component<ICard> {
 			}
 		}
 
+		if (this._button) {
+			this._button.addEventListener('click', (event) => {
+					event.preventDefault();
+					actions?.onSubmit()
+			})
+	}
 
-    if (buttonOptions?.disabledButton) {
-			this.setDisabled(this._button, true);
-			this.setText(this._button, buttonOptions.buttonText);
-		}
+		if (this._button_delete) {
+			this._button_delete.addEventListener('click', () => {
+					actions.onDelete()
+			})
+	}
+
 	}
 
 	set id(value: string) {
