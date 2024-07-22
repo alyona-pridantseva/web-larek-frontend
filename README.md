@@ -276,7 +276,6 @@ interface IEventEmitter {
 - `addToBasket(ProductItem)` - добавление продукта в корзину;
 - `clearBasket()` - очиcтка всей корзины;
 - `getTotal()` - суммарная стоимость заказа в корзине;
-- `updateBasket()` - обновление корзины;
 - `setPreview(ProductItem)` - показывает продукт в модальном окне;
 - `setAddressField(field: keyof IAddressForm, value: string)` - устанавливает значения для формы способа оплаты и формы адреса доставки;
 - `validateAddress()` — валидация формы способа оплаты и формы адреса доставки;
