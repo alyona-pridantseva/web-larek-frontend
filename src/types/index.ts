@@ -1,7 +1,7 @@
 // Интерфейс, описывающий главную страницу
 export interface IAppState {
 	catalog: ICard[];
-	basket: string[];
+	basket: ICard[];
 	order: IOrder | null; // описание заказа
 	preview: string | null; // указатель той карточки, которую хотим посмотреть(id) т.е идентификатор товара для предпросмотра
 }
@@ -10,12 +10,11 @@ export interface IAppState {
 export interface IPage {
 	counter: number;
 	catalog: HTMLElement[];
-	locked: boolean;
 }
 
-//Интерфейс модального окна
-export interface IModalData {
-	content: HTMLElement;
+export interface IFormState {
+  valid: boolean;
+  errors: string[];
 }
 
 // Интерфейс товара
@@ -26,16 +25,15 @@ export interface ICard {
 	price: number | null;
 	category: string;
 	image: string;
-	index: number;
-	button: string;
-	total: number;
+	index?: number;
+	buttonName?: string;
 }
 
 // Интерфейс отображения корзины
 export interface IBasketView {
 	total: number; // общая сумма заказа
 	items: HTMLElement[];
-	selected: HTMLElement[];
+	button: string[];
 }
 
 // Интерфейс способа оплаты и формы адреса доставки
@@ -57,9 +55,45 @@ export interface IOrder extends IAddressForm, IContactsForm {
 }
 
 // Интерфейс валидации формы
-export type FormErrors = Partial<Record<keyof IOrder, string>>;
+export type FormErrors = Partial<Record<keyof IOrderPerson, string>>;
 
 // Интерфейс результата оформления заказа
 export interface IOrderResult {
 	id: string[]; // идентификатор заказа
+	total: number;
 }
+
+//Интерфейс модального окна
+export interface IModalData {
+	content: HTMLElement;
+}
+
+export interface ISuccess {
+  total: number;
+}
+
+export interface ISuccessActions {
+	onClick: () => void;
+}
+
+export interface ICardActions {
+	onClick?: (event: MouseEvent) => void;
+}
+
+export interface IWebLarekAPI {
+	getProductList: () => Promise<ICard[]>; //получение списка карточек с сервера
+	getProductItem: (id: string) => Promise<ICard>; //получение информации карточки товара
+	orderProducts: (order: IOrder) => Promise<IOrderResult>; //отправка информации на сервер
+}
+
+export type CatalogChangeEvent = {
+	catalog: ICard[];
+};
+
+
+export interface IAppForm {
+  IOrderPerson: IOrderPerson;
+  formErrors: FormErrors;
+}
+
+ export type IOrderPerson = IAddressForm & IContactsForm;
