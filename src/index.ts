@@ -8,10 +8,12 @@ import { Modal } from './components/common/Modal';
 import { Basket } from './components/common/Basket';
 import { Card } from './components/Card';
 import { Success } from './components/common/Success';
-import { AppState, AppForm } from './components/AppData';
+import { AppState} from './components/AppData';
+import { AppForm } from './components/AppForm';
 import { ICard, IOrder, IContactsForm, IAddressForm, CatalogChangeEvent } from './types';
 import { Page } from './components/Page';
-import { OrderForm } from './components/OrderForm';
+import { addressForm } from './components/Address';
+import { contactsForm } from './components/Contacts';
 
 
 const events = new EventEmitter();
@@ -41,8 +43,8 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
 // Переиспользуемые части интерфейса
 const basket = new Basket(cloneTemplate(basketTemplate), events);
-const contactsOrder = new OrderForm(cloneTemplate(constantsTemplate), events);
-const addressOrder = new OrderForm(cloneTemplate(orderTemplate), events);
+const contactsOrder = new contactsForm(cloneTemplate(constantsTemplate), events);
+const addressOrder = new addressForm(cloneTemplate(orderTemplate), events);
 
 // Дальше идет бизнес-логика
 // Поймали событие, сделали что нужно
@@ -145,7 +147,7 @@ events.on('counter:changed', (item: string[]) => {
 })
 
 // Открыть форму с адресом и способом оплаты
-events.on('addressForm:open', () => {
+events.on('address:open', () => {
 	modal.render({
 			content: addressOrder.render({
 					payment: '',
@@ -157,7 +159,7 @@ events.on('addressForm:open', () => {
 });
 
 // Открыть форму с адресом и способом оплаты
-events.on('contactsForm:open', () => {
+events.on('contacts:open', () => {
 	modal.render({
 			content: contactsOrder.render({
 					phone: '',
@@ -188,13 +190,13 @@ events.on(/^order\..*:change/, (data: { field: keyof IAddressForm, value: string
 });
 
 // доступность кнопки, если инпут c адресом заполнен
-events.on('addressForm:ready', () => {
+events.on('address:ready', () => {
 	addressOrder.valid = true;
 });
 
 // при отправки формы с адресом, открываем модалку с контактами
-events.on('contactsForm:submit', () => {
-  events.emit('contact:open');
+events.on('order:submit', () => {
+  events.emit('contacts:open');
 });
 
 // успешно
