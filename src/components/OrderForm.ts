@@ -5,10 +5,9 @@ import { IEvents } from './base/events';
 export class OrderForm extends Form<IOrder> {
 	protected _onlineButton: HTMLButtonElement;
 	protected _cashButton: HTMLButtonElement;
-	protected _addressInput?: HTMLInputElement;
-	protected _emailInput?: HTMLInputElement;
-	protected _phoneInput?: HTMLInputElement;
-	protected _total?: number;
+	protected _addressInput: HTMLInputElement;
+	protected _emailInput: HTMLInputElement;
+	protected _phoneInput: HTMLInputElement;
 
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
@@ -22,36 +21,49 @@ export class OrderForm extends Form<IOrder> {
 		if (this._cashButton) {
 			this._cashButton.addEventListener('click', (el) => {
 				el.preventDefault();
-				this.toggleCash();
-				this.toggleCard(false);
-				this.setPayment('payment', 'При получении');
+				this._cashButton.classList.add('button_alt-active');
+				this._onlineButton.classList.remove('button_alt-active');
+				events.emit('address:change', {field:'payment', value: 'cash'} );
 			});
 		}
+
 		if (this._onlineButton) {
 			this._onlineButton.addEventListener('click', (el) => {
 				el.preventDefault;
-				this.toggleCard();
-				this.toggleCash(false);
-				this.setPayment('payment', 'Онлайн');
+				this._onlineButton.classList.add('button_alt-active');
+				this._cashButton.classList.remove('button_alt-active');
+				events.emit('address:change', {field:'payment', value: 'online'});
 			});
 		}
-	}
 
-	set address(value: string) {
-		(this.container.elements.namedItem('address') as HTMLInputElement).value =
-			'';
-	}
 
-	toggleCard(state: boolean = true) {
-		this.toggleClass(this._onlineButton, 'button_alt-active', state);
-	}
+		if (this._addressInput) {
+      this._addressInput.addEventListener('input', (evt: InputEvent) => {
+          const target = evt.target as HTMLInputElement;
+          const value = target.value;
+          events.emit('address:change', {field:'addressInput', value: value} );
+      });
+    }
+	
+		if (this._emailInput) {
+			this._emailInput.addEventListener('input', (evt: InputEvent) => {
+					const target = evt.target as HTMLInputElement;
+					const value = target.value;
+					events.emit('contacts:change', {field:'email', value: value});
+			});
+		}
+	
+		if (this._phoneInput) {
+			this._phoneInput.addEventListener('input', (evt: InputEvent) => {
+					const target = evt.target as HTMLInputElement;
+					const value = target.value;
+					events.emit('contacts:change', {field:'phone', value: value});
+			});
+		}
+	};
 
-	toggleCash(state: boolean = true) {
-		this.toggleClass(this._cashButton, 'button_alt-active', state);
-	}
-
-	setPayment(field: keyof IOrder, value: string) {
-		this.events.emit('order.payment:change', { field, value });
+	set addressInput(value: string) {
+		(this.container.elements.namedItem('address') as HTMLInputElement).value = value;
 	}
 
 	set phone(value: string) {
@@ -63,4 +75,6 @@ export class OrderForm extends Form<IOrder> {
 		(this.container.elements.namedItem('email') as HTMLInputElement).value =
 			value;
 	}
-}
+
+
+	}

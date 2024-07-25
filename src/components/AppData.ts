@@ -6,96 +6,117 @@ import {
 	IContactsForm,
 	IAddressForm,
 	FormErrors,
+	IOrderPerson,
+	IAppForm
 } from '../types/index';
 
-export type CatalogChangeEvent = {
-	catalog: CardItem[];
-};
-
-export class CardItem extends Model<ICard> {
-	title: string;
-	description: string;
-	id: string;
-	price: number | null;
-	category: string;
-	image: string;
-	index: number;
-	button: string;
-	total: number;
-}
 
 export class AppState extends Model<IAppState> {
-	basket: CardItem[] = [];
-	catalog: CardItem[];
+	basket: ICard[] = [];
+	catalog: ICard[];
 	order: IOrder = {
 		email: '',
 		phone: '',
 		items: [],
-		total: null,
+		total: 0,
 		address: '',
 		payment: '',
 	};
 	preview: string | null;
-	formErrors: FormErrors = {};
 
   setCatalog(items: ICard[]) {
-    this.catalog = items.map((item) => new CardItem(item, this.events));
-    this.emitChanges('items:changed', { catalog: this.catalog });
-  }
+		this.catalog = items;
+		this.emitChanges('items:changed', { catalog: this.catalog });
+	}
 
-  removeFromBasket(item: CardItem) {
+	updateCardsBasket(){
+		this.emitChanges('counter:changed', this.basket);
+		this.emitChanges('basket:changed', this.basket);
+	}
+
+	clearBasket() {
+    this.basket = [];
+    this.updateCardsBasket();
+  };
+
+	addToBasket(item: ICard) {
+		if (this.basket.indexOf(item) === -1){
+			this.basket.push(item);
+			this.updateCardsBasket();
+		}
+	}
+
+  removeFromBasket(item: ICard) {
     this.basket = this.basket.filter(val => val.id != item.id)
-    this.emitChanges('basket:changed')
-
-    this.basket.forEach(card => {
-        this.order.items.push(card.id)
-        this.order.items = [card.id]
-    })
-  }
-
-  addToBasket(item: CardItem) {
-		this.basket.push(item)
-    this.order.items.push(item.id)
-    this.emitChanges('basket:changed')
-  }
-
-  clearBasket() {
-    this.basket.forEach(id => {
-        this.removeFromBasket(id);
-    });
+		this.updateCardsBasket();
+    // this.emitChanges('basket:changed')
   }
 
 	getTotal() {
 		return this.basket.reduce((a, c) => a + c.price, 0);
 	}
 
-	setPreview(item: CardItem) {
+	setPreview(item: ICard) {
 		this.preview = item.id;
 		this.emitChanges('preview:changed', item);
 	}
 
-	setContactsField(field: keyof IContactsForm, value: string) {
-		this.order[field] = value;
+	clearDataOrder() { //очистка данных о заказе(кэш)
+    this.order = {
+    email: '',
+		phone: '',
+		items: [],
+		total: 0,
+		address: '',
+		payment: '',
+    };
+  };
+}
+
+export class AppForm extends Model<IAppForm>{
+  orderPerson: IOrderPerson = {
+    payment:'',
+    address:'',
+    email:'',
+    phone:''
+  };
+  formErrors: FormErrors = {};
+
+    clearDataOrder() {
+      this.orderPerson = {
+      email: '',
+      phone: '',
+      address: '',
+      payment: '',
+      };
+  };
+
+  setContactsField(field: keyof IContactsForm, value: string) {
+		this.orderPerson[field] = value;
 
 		if (this.validateContacts()) {
-			this.events.emit('order:ready', this.order);
+			this.events.emit('order:ready', this.orderPerson);
 		}
 	}
 
   setAddressField(field: keyof IAddressForm, value: string) {
-    this.order[field] = value;
+    this.orderPerson[field] = value;
 
 		if (this.validateAddress()) {
-			this.events.emit('order:ready', this.order);
+			this.events.emit('order:ready', this.orderPerson);
 		}
   }
 
-	validateAddress() {
+  validateAddress() {
 		const errors: typeof this.formErrors = {};
-		if (!this.order.address) {
+    const addressRegex = /^[а-яА-ЯёЁa-zA-Z0-9\s\/.,-]{7,}$/;
+		if (!this.orderPerson.address) {
 			errors.address = 'Необходимо указать адрес доставки';
 		}
-		if (!this.order.payment) {
+    else if (!addressRegex.test(this.orderPerson.address)) {
+      errors.address ='Проверьте правильность введеннных данных';
+    }
+		else if (!this.orderPerson.payment) {
 			errors.payment = 'Необходимо указать способ оплаты';
 		}
 		this.formErrors = errors;
@@ -105,15 +126,26 @@ export class AppState extends Model<IAppState> {
 
 	validateContacts() {
 		const errors: typeof this.formErrors = {};
-		if (!this.order.email) {
-			errors.email = 'Необходимо указать адрес эл. почты';
-		}
-		if (!this.order.phone) {
-			errors.phone = 'Необходимо указать номер телефона';
-		}
-		this.formErrors = errors;
-		this.events.emit('formErrorsContacts:change', this.formErrors);
+    const phoneRegex = /^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{10}$/;
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    if (this.orderPerson.phone.startsWith('8')) {
+      this.orderPerson.phone = '+7' + this.orderPerson.phone.slice(1);
+    }
 
-		return Object.keys(errors).length === 0;
+    if (!this.orderPerson.email) {
+      errors.email = 'Введите email';
+    } else if (!emailRegex.test(this.orderPerson.email)) {
+      errors.email = 'Неправильно введен адрес электронной почты';
+    }
+
+    if (!this.orderPerson.phone) {
+      errors.phone = 'Введите номер телефона';
+    } else if (!phoneRegex.test(this.orderPerson.phone)) {
+      errors.phone ='Неправильно введен номера телефона';
+    }
+
+    this.formErrors = errors;
+    this.events.emit('formErrors:change', this.formErrors);
+    return Object.keys(errors).length === 0;
+  }
 	}
-}

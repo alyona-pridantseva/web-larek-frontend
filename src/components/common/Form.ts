@@ -1,11 +1,7 @@
 import {Component} from "../base/Component";
 import {IEvents} from "../base/events";
 import {ensureElement} from "../../utils/utils";
-
-interface IFormState {
-    valid: boolean;
-    errors: string[];
-}
+import { IFormState } from "../../types";
 
 export class Form<T> extends Component<IFormState> {
     protected _submit: HTMLButtonElement;
@@ -44,7 +40,7 @@ export class Form<T> extends Component<IFormState> {
     set errors(value: string) {
         this.setText(this._errors, value);
     }
-    
+
     render(state: Partial<T> & IFormState) {
         const {valid, errors, ...inputs} = state;
         super.render({valid, errors});

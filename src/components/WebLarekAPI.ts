@@ -1,13 +1,9 @@
 import { Api, ApiListResponse } from './base/api';
 import { IOrder, ICard ,IOrderResult,  } from '../types';
-
-export interface IWebLarekAPI {
-	getProductList: () => Promise<ICard[]>;
-	getProductItem: (id: string) => Promise<ICard>;
-	orderProducts: (order: IOrder) => Promise<IOrderResult>;
-}
+import { IWebLarekAPI } from '../types';
 
 export class WebLarekAPI extends Api implements IWebLarekAPI {
+	//получение url
 	readonly cdn: string;
 
 	constructor(cdn: string, baseUrl: string, options?: RequestInit) {
@@ -33,15 +29,5 @@ export class WebLarekAPI extends Api implements IWebLarekAPI {
 
 	orderProducts(order: IOrder): Promise<IOrderResult> {
 		return this.post('/order', order).then((data: IOrderResult) => data);
-	}
-
-	orderProductsSuccess(order: IOrder) {
-		return this.post('/order', order)
-			.then((result: IOrderResult) => {
-				result;
-			})
-			.catch((err) => {
-				console.error(err);
-			});
 	}
 }

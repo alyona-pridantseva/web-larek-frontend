@@ -8,9 +8,6 @@ export class Basket extends Component<IBasketView> {
     protected _list: HTMLElement;
     protected _total: HTMLElement;
     protected _button: HTMLElement;
-    protected _index: HTMLSpanElement;
-    protected _items: HTMLElement[];
-    protected _delete: HTMLButtonElement;
 
     constructor(container: HTMLElement, protected events: EventEmitter) {
         super(container);
@@ -38,11 +35,11 @@ export class Basket extends Component<IBasketView> {
         }
     }
 
-    set selected(items: string[]) {
-        if (items.length) {
-            this.setDisabled(this._button, false);
-        } else {
+    set selected(items: number) {
+        if ( items === 0 ) {
             this.setDisabled(this._button, true);
+        } else {
+            this.setDisabled(this._button, false);
         }
     }
 
