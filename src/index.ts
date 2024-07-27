@@ -8,13 +8,18 @@ import { Modal } from './components/common/Modal';
 import { Basket } from './components/common/Basket';
 import { Card } from './components/Card';
 import { Success } from './components/common/Success';
-import { AppState} from './components/AppData';
+import { AppState } from './components/AppData';
 import { AppForm } from './components/AppForm';
-import { ICard, IOrder, IContactsForm, IAddressForm, CatalogChangeEvent } from './types';
+import {
+	ICard,
+	IOrder,
+	IContactsForm,
+	IAddressForm,
+	CatalogChangeEvent,
+} from './types';
 import { Page } from './components/Page';
-import { addressForm } from './components/Address';
-import { contactsForm } from './components/Contacts';
-
+import { addressForm } from './components/Order';
+import { contactsForm } from './components/Order'; 
 
 const events = new EventEmitter();
 const api = new WebLarekAPI(CDN_URL, API_URL);
@@ -43,7 +48,10 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
 // Переиспользуемые части интерфейса
 const basket = new Basket(cloneTemplate(basketTemplate), events);
-const contactsOrder = new contactsForm(cloneTemplate(constantsTemplate), events);
+const contactsOrder = new contactsForm(
+	cloneTemplate(constantsTemplate),
+	events
+);
 const addressOrder = new addressForm(cloneTemplate(orderTemplate), events);
 
 // Дальше идет бизнес-логика
@@ -80,62 +88,61 @@ events.on('basket:open', () => {
 });
 
 //превью карточки
-events.on('card:select',  (item: ICard)=>{
-  appData.setPreview(item);
+events.on('card:select', (item: ICard) => {
+	appData.setPreview(item);
 });
 
 // добавление и удаления в корзину
 events.on('card:selected', (item: ICard) => {
-  if (appData.basket.indexOf(item) === -1){
-    appData.addToBasket(item);
-    events.emit('cardBasket:add', item);
-  } else {
-    appData.removeFromBasket(item);
-    events.emit('cardBasket:remove', item);
-  }
+	if (appData.basket.indexOf(item) === -1) {
+		appData.addToBasket(item);
+		events.emit('cardBasket:add', item);
+	} else {
+		appData.removeFromBasket(item);
+		events.emit('cardBasket:remove', item);
+	}
 });
 
-
-// Изменена открытая выбранная карточка
+// Изменена открытая выбранная карточка в отдельном окне
 events.on('preview:changed', (item: ICard) => {
-	const card = new Card('card', cloneTemplate(cardPreviewTemplate),{
-			onClick: () => {
-				events.emit('card:selected', item);
-				card.buttonName = appData.basket.indexOf(item) === -1? 'Купить' :'Удалить';
-			}
+	const card = new Card('card', cloneTemplate(cardPreviewTemplate), {
+		onClick: () => {
+			events.emit('card:selected', item);
+			card.buttonName =
+				appData.basket.indexOf(item) === -1 ? 'Купить' : 'Удалить';
+		},
 	});
 
 	modal.render({
-			content: card.render({
-					category: item.category,
-					title: item.title,
-					description: item.description,
-					image: item.image,
-					price: item.price,
-					buttonName: appData.basket.indexOf(item) === -1? 'Купить' :'Удалить'
-			})
+		content: card.render({
+			category: item.category,
+			title: item.title,
+			description: item.description,
+			image: item.image,
+			price: item.price,
+			buttonName: appData.basket.indexOf(item) === -1 ? 'Купить' : 'Удалить',
+		}),
 	});
 });
 
-
 events.on('basket:changed', (items: ICard[]) => {
 	basket.items = items.map((item, index) => {
-			const card = new Card('card', cloneTemplate(cardBasketTemplate), {
-					onClick: () => {
-						events.emit('card:delete', item);
-					}
-			});
-			return card.render({
-					title: item.title,
-					price: item.price,
-					index: index + 1,
-			});
+		const card = new Card('card', cloneTemplate(cardBasketTemplate), {
+			onClick: () => {
+				events.emit('card:delete', item);
+			},
+		});
+		return card.render({
+			title: item.title,
+			price: item.price,
+			index: index + 1,
+		});
 	});
 	basket.selected = appData.basket.length;
-  const total = appData.getTotal();
-  basket.total = total;
-  appData.order.total = total;
-  appData.order.items = appData.basket.map((item) => item.id);
+	const total = appData.getTotal();
+	basket.total = total;
+	appData.order.total = total;
+	appData.order.items = appData.basket.map((item) => item.id);
 });
 
 // удаления продукты(карточки) из корзины в корзине
@@ -143,51 +150,69 @@ events.on('card:delete', (item: ICard) => appData.removeFromBasket(item));
 
 //изменение кол-ва карточек в корзине
 events.on('counter:changed', (item: string[]) => {
-  page.counter = appData.basket.length;
-})
+	page.counter = appData.basket.length;
+});
 
 // Открыть форму с адресом и способом оплаты
 events.on('address:open', () => {
 	modal.render({
-			content: addressOrder.render({
-					payment: '',
-					address: '',
-					valid: false,
-					errors: [],
-			})
+		content: addressOrder.render({
+			payment: '',
+			address: '',
+			valid: false,
+			errors: [],
+		}),
 	});
 });
 
-// Открыть форму с адресом и способом оплаты
+// Открыть форму с контактами и способом оплаты
 events.on('contacts:open', () => {
 	modal.render({
-			content: contactsOrder.render({
-					phone: '',
-					email: '',
-					valid: false,
-					errors: [],
-			})
+		content: contactsOrder.render({
+			phone: '',
+			email: '',
+			valid: false,
+			errors: [],
+		}),
 	});
 });
 
 // Изменилось состояние валидации формы
-events.on('formErrors:change', (errors: Partial<IOrder>) => {
-  const { email, phone, payment, address } = errors;
-  addressOrder.valid = !email && !phone;
-  addressOrder.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
-	contactsOrder.valid = !payment && !address;
-  contactsOrder.errors = Object.values({payment, address}).filter(i => !!i).join('; ');
+events.on('formErrors:change', (errors: Partial<IContactsForm>) => {
+	const { email, phone } = errors;
+	contactsOrder.valid = !email && !phone;
+	contactsOrder.errors = Object.values({ phone, email })
+		.filter((i) => !!i)
+		.join('; ');
+});
+
+events.on('formErrors:change', (errors: Partial<IAddressForm>) => {
+	const { payment, address } = errors;
+	addressOrder.valid = !payment && !address;
+
+	// console.log(`payment: ${payment}`);
+	// console.log(`address: ${address}`);
+
+	addressOrder.errors = Object.values({ payment, address })
+		.filter((i) => !!i)
+		.join('; ');
 });
 
 // Изменения в полях контакты
-events.on(/^order\..*:change/, (data: { field: keyof IContactsForm, value: string }) => {
-  formData.setContactsField(data.field, data.value);
-});
+events.on(
+	'contacts:change',
+	(data: { field: keyof IContactsForm; value: string }) => {
+		formData.setContactsField(data.field, data.value);
+	}
+);
 
 // Изменения в поле адреса доставки
-events.on(/^order\..*:change/, (data: { field: keyof IAddressForm, value: string }) => {
-  formData.setAddressField(data.field, data.value);
-});
+events.on(
+	'address:change',
+	(data: { field: keyof IAddressForm; value: string }) => {
+		formData.setAddressField(data.field, data.value);
+	}
+);
 
 // доступность кнопки, если инпут c адресом заполнен
 events.on('address:ready', () => {
@@ -195,48 +220,59 @@ events.on('address:ready', () => {
 });
 
 // при отправки формы с адресом, открываем модалку с контактами
-events.on('order:submit', () => {
-  events.emit('contacts:open');
+events.on('address:submit', () => {
+	events.emit('contacts:open');
+});
+
+// доступность кнопки с контактами
+events.on('contacts:ready', () => {
+	contactsOrder.valid = true;
+});
+
+// при отправки контактов, открывется успешное окно
+events.on('contacts:submit', () => {
+	events.emit('success:open');
 });
 
 // успешно
 events.on('success:open', () => {
-  const data: IOrder = {
-    payment: formData.orderPerson.payment,
-    address: formData.orderPerson.address,
-    email: formData.orderPerson.email,
-    phone: formData.orderPerson.phone,
-    total: appData.order.total,
-    items: appData.order.items
-  };
-	api.orderProducts(data)
-    .then((result)=>{
-      appData.clearBasket();
-      appData.clearDataOrder();
-      formData.clearDataOrder();
-      const success = new Success(cloneTemplate(successTemplate), {
-        onClick: () => {
-          modal.close();
-        },
-      });
+	const data: IOrder = {
+		payment: formData.orderPerson.payment,
+		address: formData.orderPerson.address,
+		email: formData.orderPerson.email,
+		phone: formData.orderPerson.phone,
+		total: appData.order.total,
+		items: appData.order.items,
+	};
+	api
+		.orderProducts(data)
+		.then((result) => {
+			appData.clearBasket();
+			appData.clearDataOrder();
+			formData.clearDataOrder();
+			const success = new Success(cloneTemplate(successTemplate), {
+				onClick: () => {
+					modal.close();
+				},
+			});
 
-      success.total = result.total.toString();
-      modal.render({
-        content: success.render({})
-      });
-    })
+			success.total = result.total.toString();
+			modal.render({
+				content: success.render({}),
+			});
+		})
 
-    .catch((err) => {
-      console.log(err);
-    });
+		.catch((err) => {
+			console.log(err);
+		});
 });
 
 // Блокируем прокрутку страницы если открыта модалка
 events.on('modal:open', () => {
-  page.locked = true;
+	page.locked = true;
 });
 
 // ... и разблокируем
 events.on('modal:close', () => {
-  page.locked = false;
+	page.locked = false;
 });

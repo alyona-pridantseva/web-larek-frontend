@@ -54,7 +54,7 @@ export interface IOrder extends IAddressForm, IContactsForm {
 	total: number;
 }
 
-// Интерфейс валидации формы
+// Интерфейс валидации формы покупателя
 export type FormErrors = Partial<Record<keyof IOrderPerson, string>>;
 
 // Интерфейс результата оформления заказа
