@@ -1,4 +1,4 @@
-import { Model } from './base/Model';
+import { Model } from '../base/Model';
 import {
 	ICard,
 	IAppState,
@@ -8,7 +8,7 @@ import {
 	FormErrors,
 	IOrderPerson,
 	IAppForm
-} from '../types/index';
+} from '../../types/index';
 
 
 export class AppState extends Model<IAppState> {

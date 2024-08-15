@@ -1,11 +1,11 @@
-import { Model } from './base/Model';
+import { Model } from '../base/Model';
 import {
 	IContactsForm,
 	IAddressForm,
 	FormErrors,
 	IOrderPerson,
 	IAppForm,
-} from '../types/index';
+} from '../../types/index';
 
 export class AppForm extends Model<IAppForm> {
 	orderPerson: IOrderPerson = {
@@ -52,7 +52,7 @@ export class AppForm extends Model<IAppForm> {
 			// console.log(`второе условие валидации адреса: ${!addressRegex.test(this.orderPerson.address)}`);
 			errors.address = 'Проверьте правильность введеннных данных';
 		} else if (!this.orderPerson.payment) {
-			// console.log(`трерье условие валидации адреса: ${!this.orderPerson.payment}`);
+			// console.log(`третье условие валидации адреса: ${!this.orderPerson.payment}`);
 			errors.payment = 'Необходимо указать способ оплаты';
 		}
 

@@ -1,15 +1,15 @@
 import './scss/styles.scss';
 
-import { WebLarekAPI } from './components/WebLarekAPI';
+import { WebLarekAPI } from './components/logic/WebLarekAPI';
 import { CDN_URL, API_URL } from './utils/constants';
 import { EventEmitter } from './components/base/events';
 import { cloneTemplate, ensureElement, createElement } from './utils/utils';
 import { Modal } from './components/common/Modal';
-import { Basket } from './components/common/Basket';
-import { Card } from './components/Card';
-import { Success } from './components/common/Success';
-import { AppState } from './components/AppData';
-import { AppForm } from './components/AppForm';
+import { Basket } from './components/view/Basket';
+import { Card } from './components/view/Card';
+import { Success } from './components/view/Success';
+import { AppState } from './components/logic/AppData';
+import { AppForm } from './components/logic/AppForm';
 import {
 	ICard,
 	IOrder,
@@ -17,9 +17,9 @@ import {
 	IAddressForm,
 	CatalogChangeEvent,
 } from './types';
-import { Page } from './components/Page';
-import { addressForm } from './components/Order';
-import { contactsForm } from './components/Order'; 
+import { Page } from './components/view/Page';
+import { addressForm } from './components/view/Order';
+import { contactsForm } from './components/view/Order'; 
 
 const events = new EventEmitter();
 const api = new WebLarekAPI(CDN_URL, API_URL);
@@ -48,10 +48,7 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
 // Переиспользуемые части интерфейса
 const basket = new Basket(cloneTemplate(basketTemplate), events);
-const contactsOrder = new contactsForm(
-	cloneTemplate(constantsTemplate),
-	events
-);
+const contactsOrder = new contactsForm(cloneTemplate(constantsTemplate), events);
 const addressOrder = new addressForm(cloneTemplate(orderTemplate), events);
 
 // Дальше идет бизнес-логика
@@ -103,7 +100,7 @@ events.on('card:selected', (item: ICard) => {
 	}
 });
 
-// Изменена открытая выбранная карточка в отдельном окне
+// Изменена открытая выбранная карточка в отдельном окне(превью)
 events.on('preview:changed', (item: ICard) => {
 	const card = new Card('card', cloneTemplate(cardPreviewTemplate), {
 		onClick: () => {
@@ -145,7 +142,7 @@ events.on('basket:changed', (items: ICard[]) => {
 	appData.order.items = appData.basket.map((item) => item.id);
 });
 
-// удаления продукты(карточки) из корзины в корзине
+// удаление продукта(карточки) из корзины в корзине
 events.on('card:delete', (item: ICard) => appData.removeFromBasket(item));
 
 //изменение кол-ва карточек в корзине

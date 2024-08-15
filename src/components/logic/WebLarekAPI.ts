@@ -1,6 +1,6 @@
-import { Api, ApiListResponse } from './base/api';
-import { IOrder, ICard ,IOrderResult,  } from '../types';
-import { IWebLarekAPI } from '../types';
+import { Api, ApiListResponse } from '../base/api';
+import { IOrder, ICard ,IOrderResult,  } from '../../types';
+import { IWebLarekAPI } from '../../types';
 
 export class WebLarekAPI extends Api implements IWebLarekAPI {
 	//получение url

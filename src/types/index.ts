@@ -17,7 +17,7 @@ export interface IFormState {
   errors: string[];
 }
 
-// Интерфейс товара
+// Интерфейс карточки
 export interface ICard {
 	title: string;
 	description: string;
@@ -82,7 +82,7 @@ export interface ICardActions {
 
 export interface IWebLarekAPI {
 	getProductList: () => Promise<ICard[]>; //получение списка карточек с сервера
-	getProductItem: (id: string) => Promise<ICard>; //получение информации карточки товара
+	getProductItem: (id: string) => Promise<ICard>; //получение информации карточки продукта
 	orderProducts: (order: IOrder) => Promise<IOrderResult>; //отправка информации на сервер
 }
 

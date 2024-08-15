@@ -1,8 +1,8 @@
-import { Form } from './common/Form';
-import { IAddressForm } from '../types/index';
-import { IContactsForm } from '../types/index';
-import { IEvents } from './base/events';
-import { ensureElement } from '../utils/utils';
+import { Form } from '../common/Form';
+import { IAddressForm } from '../../types';
+import { IContactsForm } from '../../types';
+import { IEvents } from '../base/events';
+import { ensureElement } from '../../utils/utils';
 
 export class addressForm extends Form<IAddressForm> {
 	protected _onlineButton: HTMLButtonElement;
