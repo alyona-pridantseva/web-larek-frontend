@@ -81,13 +81,13 @@ interface IFormState {
 ```
 interface ICard {
   title: string;
-	description: string;
-	id: string;
-	price: number | null;
-	category: string;
-	image: string;
-	index?: number;
-	buttonName?: string;
+  description: string;
+  id: string;
+  price: number | null;
+  category: string;
+  image: string;
+  index?: number;
+  buttonName?: string;
 }
 ```
 
@@ -95,9 +95,9 @@ interface ICard {
 
 ```
 interface IBasketView {
-	total: number; // общая сумма заказа
-	items: HTMLElement[];
-	button: string[];
+  total: number; // общая сумма заказа
+  items: HTMLElement[];
+  button: string[];
 }
 ```
 
@@ -105,8 +105,8 @@ interface IBasketView {
 
 ```
 interface IAddressForm {
-	payment: string;
-	address: string;
+  payment: string;
+  address: string;
 }
 ```
 
@@ -114,8 +114,8 @@ interface IAddressForm {
 
 ```
 interface IContactsForm {
-	email: string;
-	phone: string;
+  email: string;
+  phone: string;
 }
 ```
 
@@ -123,8 +123,8 @@ interface IContactsForm {
 
 ```
 interface IOrder extends IAddressForm, IContactsForm {
-	items: string[]; // Список товаров
-	total: number;
+  items: string[]; // Список товаров
+  total: number;
 }
 ```
 
@@ -138,8 +138,8 @@ type FormErrors = Partial<Record<keyof IOrderPerson, string>>;
 
 ```
 interface IOrderResult {
-	id: string[]; // идентификатор заказа
-	total: number;
+  id: string[]; // идентификатор заказа
+  total: number;
 }
 ```
 
@@ -147,7 +147,7 @@ interface IOrderResult {
 
 ```
 interface IModalData {
-    content: HTMLElement;
+  content: HTMLElement;
 }
 ```
 
@@ -162,15 +162,14 @@ interface ISuccess {
 Интерфейс действий успешной покупки
 ```
 interface ISuccessActions {
-	onClick: () => void;
+  onClick: () => void;
 }
 ```
-
 
 Интерфейс действий карточки
 ```
 interface ICardActions {
-	onClick?: (event: MouseEvent) => void;
+  onClick?: (event: MouseEvent) => void;
 }
 ```
 
@@ -178,16 +177,16 @@ interface ICardActions {
 
 ```
 interface IWebLarekAPI {
-	getProductList: () => Promise<ICard[]>; //получение списка карточек с сервера
-	getProductItem: (id: string) => Promise<ICard>; //получение информации карточки продукта
-	orderProducts: (order: IOrder) => Promise<IOrderResult>; //отправка информации на сервер
+  getProductList: () => Promise<ICard[]>; //получение списка карточек с сервера
+  getProductItem: (id: string) => Promise<ICard>; //получение информации карточки продукта
+  orderProducts: (order: IOrder) => Promise<IOrderResult>; //отправка информации на сервер
 }
 ```
 
 Интерфейс изменения каталога
 ```
 type CatalogChangeEvent = {
-	catalog: ICard[];
+  catalog: ICard[];
 };
 ```
 
@@ -202,7 +201,7 @@ interface IAppForm {
 
 Интерфейс описывающий данные адреса и контакты
 ```
- export type IOrderPerson = IAddressForm & IContactsForm;
+export type IOrderPerson = IAddressForm & IContactsForm;
 ```
 
 ### Базовый код. Директория base.
