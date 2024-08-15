@@ -47,7 +47,7 @@ yarn build
 
 ## Данные и типы данных, используемые в приложении
 
-Интерфейс, описывающий главную страницу
+Интерфейс, описывающий состояние страницы
 
 ```
 interface IAppState {
@@ -63,7 +63,7 @@ interface IAppState {
 ```
 interface IPage {
   counter: number;
-	catalog: HTMLElement[];
+  catalog: HTMLElement[];
 }
 ```
 
@@ -80,7 +80,7 @@ interface IFormState {
 
 ```
 interface ICard {
-	title: string;
+  title: string;
 	description: string;
 	id: string;
 	price: number | null;
