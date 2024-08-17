@@ -19,7 +19,7 @@ import {
 } from './types';
 import { Page } from './components/view/Page';
 import { addressForm } from './components/view/Order';
-import { contactsForm } from './components/view/Order'; 
+import { contactsForm } from './components/view/Order';
 
 const events = new EventEmitter();
 const api = new WebLarekAPI(CDN_URL, API_URL);
@@ -48,7 +48,10 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
 // Переиспользуемые части интерфейса
 const basket = new Basket(cloneTemplate(basketTemplate), events);
-const contactsOrder = new contactsForm(cloneTemplate(constantsTemplate), events);
+const contactsOrder = new contactsForm(
+	cloneTemplate(constantsTemplate),
+	events
+);
 const addressOrder = new addressForm(cloneTemplate(orderTemplate), events);
 
 // Дальше идет бизнес-логика
@@ -152,6 +155,11 @@ events.on('counter:changed', (item: string[]) => {
 
 // Открыть форму с адресом и способом оплаты
 events.on('address:open', () => {
+	addressOrder.clearFormAddress(); // очищаем модалку при след.покупке
+
+	events.emit('address:change', { field: 'payment', value: '' });
+	events.emit('address:change', { field: 'address', value: '' });
+
 	modal.render({
 		content: addressOrder.render({
 			payment: '',
@@ -174,15 +182,7 @@ events.on('contacts:open', () => {
 	});
 });
 
-// Изменилось состояние валидации формы
-events.on('formErrors:change', (errors: Partial<IContactsForm>) => {
-	const { email, phone } = errors;
-	contactsOrder.valid = !email && !phone;
-	contactsOrder.errors = Object.values({ phone, email })
-		.filter((i) => !!i)
-		.join('; ');
-});
-
+// Изменилось состояние валидации формы с адресом доставки
 events.on('formErrors:change', (errors: Partial<IAddressForm>) => {
 	const { payment, address } = errors;
 	addressOrder.valid = !payment && !address;
@@ -195,19 +195,28 @@ events.on('formErrors:change', (errors: Partial<IAddressForm>) => {
 		.join('; ');
 });
 
-// Изменения в полях контакты
-events.on(
-	'contacts:change',
-	(data: { field: keyof IContactsForm; value: string }) => {
-		formData.setContactsField(data.field, data.value);
-	}
-);
-
 // Изменения в поле адреса доставки
 events.on(
 	'address:change',
 	(data: { field: keyof IAddressForm; value: string }) => {
 		formData.setAddressField(data.field, data.value);
+	}
+);
+
+// Изменилось состояние валидации формы с контактами
+events.on('formErrors:change', (errors: Partial<IContactsForm>) => {
+	const { email, phone } = errors;
+	contactsOrder.valid = !email && !phone;
+	contactsOrder.errors = Object.values({ phone, email })
+		.filter((i) => !!i)
+		.join('; ');
+});
+
+// Изменения в полях контакты
+events.on(
+	'contacts:change',
+	(data: { field: keyof IContactsForm; value: string }) => {
+		formData.setContactsField(data.field, data.value);
 	}
 );
 
