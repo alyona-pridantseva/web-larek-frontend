@@ -345,7 +345,7 @@ export type IOrderPerson = IAddressForm & IContactsForm;
 
 Поля класса:
 
--`readonly cdn: string` - получение url.
+- `readonly cdn: string` - получение url.
 
 Поля класса:
 
