@@ -63,7 +63,7 @@ export class AppForm extends Model<IAppForm> {
 
 	validateContacts() {
 		const errors: typeof this.formErrors = {};
-		const phoneRegex = /^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{10}$/;
+		const phoneRegex = /^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/;
 		const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 		if (this.orderPerson.phone.startsWith('8')) {
 			this.orderPerson.phone = '+7' + this.orderPerson.phone.slice(1);
