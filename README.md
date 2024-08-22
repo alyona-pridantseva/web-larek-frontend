@@ -51,8 +51,8 @@ yarn build
 
 ```
 interface IAppState {
-  catalog: IProductItem[];
-  basket:  string[];
+  catalog: ICard[];
+  basket: ICard[];
   order: IOrder | null; // описание заказа
   preview: string | null; // указатель той карточки, которую хотим посмотреть(id) т.е идентификатор товара для предпросмотра
 }
