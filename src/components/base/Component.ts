@@ -13,6 +13,8 @@ export abstract class Component<T> {
     // Переключить класс
     toggleClass(element: HTMLElement, className: string, force?: boolean) {
         element.classList.toggle(className, force);
+
+        // console.log(element.classList);
     }
 
     // Установить текстовое содержимое

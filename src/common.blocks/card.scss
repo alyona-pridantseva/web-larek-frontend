@@ -61,11 +61,12 @@
     margin-bottom: 12px;
     color: $primary;
 
-    &_soft {
-      background-color: $category1;
-    }
+    
     &_hard {
       background-color: $category5;
+    }
+    &_soft {
+      background-color: $category1;
     }
     &_other {
       background-color: $category2;
